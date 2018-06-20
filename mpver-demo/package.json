@@ -10,9 +10,12 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "better-scroll": "^1.12.1",
     "flyio": "^0.5.9",
     "minapp-api-promise": "^1.0.2",
-    "mpvue": "^1.0.11"
+    "mpvue": "^1.0.11",
+    "sass-loader": "^7.0.3",
+    "vue-router": "^3.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.22.1",
