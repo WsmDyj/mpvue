@@ -2,75 +2,83 @@
   <div id="app">
    <v-header :seller="seller"></v-header>
     <div class="tab">
-      <div class="tab-item">
-        <a href="/goods" class="router">商品</a>
-      </div>
-      <div class="tab-item">
-        <a href="/ratings" class="router">商品</a>
-       </div>
-      <div class="tab-item">
-         <a href="/seller" class="router">商家</a>
-       </div>
+          <scroll-view class="tab-item" :class="{active:changeNav == index}" v-for="(item,index) in navList" :key="index" :data-current="index" @tap="swichNav">
+           {{item.name}}
+          </scroll-view>
     </div>
-    <router-view></router-view>
+    <goods v-if="changeNav==0" ></goods>
+    <ratings v-if="current==1" :seller="seller"></ratings>
+    <seller v-if="current==2" :seller="seller"></seller>
+   
   </div>
-</template>
 
+</template>
 <script>
   import header from "@/components/header/header";
-
+  import goods from "@/components/goods/goods";
+  import ratings from "@/components/ratings/ratings";
+  import seller from "@/components/seller/seller"
 export default {
   data() {
     return {
-      seller: {}
+      goods:{},
+      seller: {},
+      navList: [{name:'商品'},{name:'评论'},{name:'商家'}],
+      changeNav:0,
+      current: null
     }
+  },
+  methods: {
+     swichNav(e) {
+       const current = e.currentTarget.dataset.current
+        this.changeNav = current
+        this.current = current
+      //  console.log(current)
+     },
+     swiperChange(e) {
+       console.log(e)
+     }
   },
   created() {
      wx.request({
         url:'https://www.easy-mock.com/mock/5aded45053796b38dd26e970/sell#!method=get',
         success: (res) => {
           this.seller = res.data.data.seller
-          console.log(res.data.data.seller)
+          this.goods = res.data.data.goods
         },
       })
-         
     },
- 
   components: {
-    "v-header":header
+    "v-header":header,
+    goods:goods,
+    ratings: ratings,
+    seller: seller,
   }
 }
 </script>
+<style lang="stylus" scoped>
 
-<style >
-
-  .tab {
-    display: flex;
-    width: 100%;
-    height: 40px;
-    line-height: 40px;
-    text-align: center;
-    /* border-bottom: 1px solid rgba(7, 17, 27, 0.1); */
-    position: relative;
-  }
-  .tab::after {
-    display: block;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    border-top: 1px solid rgba(7, 17, 27, 0.1);
-    content: '';
-  }
-  .tab-item {
-    flex: 1
-  }
-  .tab-item .router {
-    display: block;
-    font-size: 14px;
-    color: rgb(77, 85, 93);
-  }
-  .tab-item .router-link-active  {
-    color: rgb(240, 20, 20)
-  }
+  .tab
+    display flex
+    justify-content space-around
+    align-items center
+    width 100%
+    height 80rpx
+    text-align center
+    position relative
+    &:after 
+      display block
+      position absolute
+      left 0
+      bottom 0
+      width 100%
+      border-top 1px solid rgba(7, 17, 27, 0.1)
+      content ''
+    .tab-item
+      font-size 28rpx
+      color rgb(77,85,93)
+      line-height 28rpx
+    .active  
+      color rgb(240, 20, 20)
+    
 </style>

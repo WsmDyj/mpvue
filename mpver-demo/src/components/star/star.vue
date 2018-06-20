@@ -53,10 +53,10 @@ export default {
             background-repeat no-repeat
         &.star-48
             .star-item
-                width 20px
-                height 20px
-                margin-right 22px
-                background-size 20px 20px
+                width 40rpx
+                height 40rpx
+                margin-right 44rpx
+                background-size 40rpx 40rpx
                 &:last-child
                     margin-right 0
                 &.on
@@ -67,10 +67,10 @@ export default {
                     bg-image('star48_off')
         &.star-36
             .star-item
-                width 15px
-                height 15px
-                margin-right 16px
-                background-size 15px 15px
+                width 30rpx
+                height 30rpx
+                margin-right 16rpx
+                background-size 30rpx 30rpx
                 &:last-child
                     margin-right 0
                 &.on

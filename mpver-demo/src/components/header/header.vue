@@ -12,17 +12,18 @@
                 <div class="description">{{seller.description}}/{{seller.deliveryTime}}分钟送达
                 </div>
                 <div v-if="seller.supports" class="support">
-                    <span class="icon" :class="classMap[seller.supports[0].type]"></span>
+                    <span class="icon decrease" :class="classMap[seller.supports[0].type]"></span>
                     <span class="text">{{seller.supports[0].description}}</span>
                 </div>
            </div>
            <div v-if="seller.supports" class="support-count" @click="showDetail">
-               <span class="count">{{seller.supports.length}}个 ></span>
-               <i class="iconfont icon-arrow-right"></i>
+               <span class="count">{{seller.supports.length}}个</span>
+               <i class="iconfont icon-icon icon"></i>
            </div>
         </div>
         <div class="bulletin-wrapper" @click="showDetail">
             <span class="bulletin-title"></span><span class="bulletin-text">{{seller.bulletin}}</span>
+            
         </div>
         <div class="background">
             <image :src="seller.avatar" width="100%" height="100%"/>
@@ -157,6 +158,9 @@ export default {
                         line-height 24rpx
                         font-size 20rpx
             .support-count
+                display flex
+                text-align center
+                justify-content space-around
                 position absolute
                 right 24rpx
                 bottom 36rpx
@@ -165,9 +169,13 @@ export default {
                 line-height 48rpx
                 border-radius 28rpx
                 background rgba(0,0,0,0.2)
-                text-align center
                 .count
                     font-size 20rpx
+                .icon
+                    font-size 25rpx
+                    padding-left 5rpx
+
+                    
         .bulletin-wrapper
             height 56rpx
             line-height 56rpx

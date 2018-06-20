@@ -1,66 +1,100 @@
 <template>
 <div class="goods">
-   <div class="menu-wrapp">
+   <scroll-view :scroll-y="frue" class="menu-wrapp">
        <ul>
-           <li v-for="(item ,index) in goods" :key="index" class="menu-item">
+           <li  class="menu-item" :class="{'active':changeGoods === item.id}" v-for="(item,index) in goods" :key="index" :data-id="item.id" @click="switchGoods">
                <span class="text border-1px">
-                   <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>
                     {{item.name}}
                 </span>
            </li>
        </ul>
-   </div>
-   <div class="foods-wrapper">
+   </scroll-view>
+      <scroll-view :scroll-y="true" class="foods-wrapper" scroll-top="0" :scroll-into-view="whereFood">
        <ul>
-           <li v-for="(item,index) in goods" :key="index" class="food-list">
+           <li v-for="(item,curr) in goods" :key="curr" :data-id="curr" :id="item.id"   @click="selectFood" class="food-list " >
                <h1 class="title">{{item.name}}</h1>
                <ul>
                    <li v-for="(food, index) in item.foods" :key="index" class="food-item  border-1px">
                        <div class="icon">
-                           <img :src="food.icon" width="57" height="57"/>
+                           <image :src="food.icon" style="width:114rpx;height:114rpx" />
                        </div>
                        <div class="content">
                            <h2 class="name">{{food.name}}</h2>
                            <p class="desc">{{food.description}}</p>
                            <div class="extra">
-                               <span class="count">月售{{food.sellerCount}}份</span>
-                               <span>好评率{{food.rating}}%</span>
+                               <span class="count">月售{{food.sellCount}}份</span>
+                               <span class="rating">好评率{{food.rating}}%</span>
                            </div>
                            <div class="price">
                                <span class="now">￥{{food.price}}</span>
                                <span v-show="food.oldPrice" class="old">￥{{food.oldPrice}}</span>
+                           </div>
+                           <div class="cartcontrol-wrapper">
+                               <cartcontrol :food="food"></cartcontrol>
                            </div>
                        </div>
                    </li>
                </ul>
            </li>
        </ul>
-   </div>
+   </scroll-view>
+    <shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
 </div>
 </template>
-
 <script>
+    import shopcart from "../shopcart/shopcart"
+    import cartcontrol  from "../cartcontrol/cartcontrol"
 export default {
-    props: {
-        seller: {
-            type: Object
-        }
-    },
     data() {
         return {
-            goods: []
+            goods: {},
+            seller: {},
+            changeGoods: 'hot',
+            whereFood: 'hot'
         }
     },
-    created() {
+    onLoad() {
     this.classMap = ['decrease','discount','special','invoice','guarantee'];
-
-        this.$http.get('https://www.easy-mock.com/mock/5aded45053796b38dd26e970/sell#!method=get')
-        .then((response)=>{
-        response = response.body;
-        this.goods = response.data.goods;
-        // console.log(this.goods)
-    })
+     wx.request({
+        url:'https://www.easy-mock.com/mock/5aded45053796b38dd26e970/sell#!method=get',
+        success: (res) => {
+          this.goods = res.data.data.goods
+          this.seller = res.data.data.seller
+        },
+        
+      })
+ 
+    },
+    components: {
+        shopcart,
+        cartcontrol
+    },
+    methods: {
+        switchGoods(e) {
+            const current = e.currentTarget.dataset.id;
+            this.changeGoods = current;
+            this.whereFood = current;
+            console.log(this.changeGoods);
+        },
+       selectFood(e) {
+            console.log(e)
+        },
+        
+    },
+    computed: {
+        selectFoods() {
+            let foods = [];
+            this.goods.forEach((good) => {
+                good.foods.forEach((food)=>{
+                    if(food.count){
+                         foods.push(food);
+                    }
+                })
+            });
+            return foods
+        }
     }
+
 }
 </script>
 
@@ -69,27 +103,34 @@ export default {
     .goods
         display flex
         position absoult 
-        top 174px
-        width 100%
-        bottom 46px
+        top 348rpx
+        bottom 92rpx
+        height 100vh
         overflow hidden
         .menu-wrapp
-            flex 0 0 80px
-            width 80px
+            flex 0 0 160rpx
+            width 160rpx
             background #f3f5f7
+            .active
+                position relative
+                background #ffffff
+                z-index 10
+                margin-top -2rpx
+                font-weight 700
+                .text
+                    border-none()
             .menu-item
                 display table
-                height 54px
-                width 56px
-                line-height 14px
-                padding 0 12px
+                height 108rpx
+                width 112rpx
+                line-height 28rpx
+                padding 0 24rpx
                 .icon
-                    display inline-block
-                    width 16px
-                    height 16px
+                    width 32rpx
+                    height 32rpx
                     vertical-align top
-                    margin-right 2px
-                    background-size 16px 16px
+                    margin-right 4rpx
+                    background-size 32rpx 32rpx
                     background-repeat no-repeat
                     &.decrease
                         bg-image('decrease_3')
@@ -103,57 +144,66 @@ export default {
                         bg-image('special_3')
                 .text
                     display table-cell
-                    font-size 12px
-                    width 56px
+                    font-size 24rpx
+                    width 112rpx
                     border-1px(rgba(7,17,27,.1))
                     vertical-align middle
         .foods-wrapper
             flex 1
             .title
-                padding-left 14px
-                height 26px
-                line-height 26px
-                border-left 2px solid #d9dde1
-                font-size 12px
+                padding-left 28rpx
+                height 52rpx
+                line-height 52rpx
+                border-left 4rpx solid #d9dde1
+                font-size 24rpx
                 color rgb(147,153,159)
                 background #f3f5f7
             .food-item
                 display flex
-                margin 18px
-                padding-bottom 18px
+                margin 36rpx
+                padding-bottom 36rpx
                 border-1px(rgba(7,17,27,.1))
                 &:last-child
                     border-none()
                     margin-bottom 0
                 .icon 
-                    flex 0 0 57px
-                    margin-right 10px
+                    flex 0 0 114rpx
+                    margin-right 20rpx
                 .content
                     flex 1
                     .name
-                        margin 2px 0 8px 0
-                        font-size 14px
-                        line-height 14px
+                        margin 4rpx 0 16rpx 0
+                        font-size 28rpx
+                        line-height 28rpx
                         color rgb(7,17,27)
                     .desc, .extra
-                        line-height 10px
-                        font-size 10px
+                        line-height 20rpx
+                        font-size 20rpx
                         color rgb(147,153,159)
                     .desc
-                        margin-bottom 8px
+                        margin-bottom 16rpx
                     .extra
-                        &.count
-                            margin-right 12px
+                        .count
+                            margin-right 24rpx
+                          
                     .price
                         font-weight 700
-                        line-height 24px
+                        line-height 48rpx
+                        vertical-align top
                         .now
-                            margin-right 8px
-                            font-size 14px
+                            margin-right 16rpx
+                            font-size 28rpx
                             color rgb(240,20,20)
                         .old
                             text-decoration line-through
-                            font-size 10px
+                            font-size 20rpx
                             color rgb(147,153,159)
+                    .cartcontrol-wrapper
+                        position absolute 
+                        right 0
+                        top 0
+                        bottom 30rpx
+                        margin-top 70rpx
+
                         
 </style>
