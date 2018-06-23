@@ -1,10 +1,11 @@
 <template>
-    <div class="shopcart">
-        <div class="content">
+    <div>
+     <div class="shopcart">
+        <div class="content" @click="toggleList">
             <div class="content-left">
-                <div class="logo-wrapper">
+                <div class="logo-wrapper" :class="{'highlight': totalCount>0}">
                     <div class="logo" :class="{'highlight': totalCount>0}">
-                       <i class="iconfont icon-gouwuche icon" :class="{'highlight': totalCount>0}"></i>
+                       <i class="iconfont icon-gouwuche icon"  :class="{'highlight': totalCount>0}"></i>
                     </div>
                     <div class="num" v-show="totalCount>0">{{totalCount}}</div>
                 </div>
@@ -12,57 +13,48 @@
                 <div class="desc">另需配送费{{deliveryPrice}}元</div>
             </div>
             <div class="content-right">
-                <div class="pay" :class="{'enough':totalPrice>=minPrice}">
+                <div class="pay" :class="{'enough':totalPrice>=minPrice}" @click.stop="toPay">
                     {{payDesc}}
                 </div>
             </div>
         </div>
-     
         
         <div class="shopcart-list" v-show="listShow">
+             <notice></notice>
             <div class="list-header">
-                <h1 class="title">购物车</h1>
-                <span class="empty">清空</span>
+                <div class="delete">
+                <span class="image"></span>
+                <span class="empty" @click="empty">清空购物车</span>
+                </div>
             </div>
-            <!-- <div class="list-content">
+             <scroll-view :scroll-y="true" class="list-content">
                 <ul>
-                    <li class="food" v-for="(food,index) in selectFoods" :key="index"></li>
-                    <span class="name">{{food.name}}</span>
-                    <div class="price">
-                        <span>￥{{food.price*food.count}}</span>
-                    </div>
-                    <div class="cartcontrol-wrapper">
-                        <cartcontrol :food="food"></cartcontrol>
-                    </div>
+                    <li class="food" v-for="(food,index) in selectFoods" :key="index">
+                        <span class="name">{{food.name}}</span>
+                        <div class="price">
+                            <span>￥{{food.price*food.count}}</span>
+                        </div>
+                        <div class="cartcontrol-wrapper">
+                            <cartcontrol :food="food"></cartcontrol>
+                        </div>
+                    </li>
                 </ul>
-            </div> -->
+             </scroll-view>
         </div>
-    </div>
+     </div>
+     <div class="list-mask" v-show="listShow" @click="toggleList"></div>
+    </div>   
 </template>
 
 <script>
     import cartcontrol  from "../cartcontrol/cartcontrol"
-
+    import notice  from "../notice/notice"
+     
 export default {
+   
     data() {
         return {
              flod:true,
-             balls: [
-                {
-                 show: false
-                },
-                {
-                 show: false
-                },
-                {
-                 show: false
-                },
-                {
-                 show: false
-                },{
-                 show: false
-                }
-             ]
         }
     },
      props: {
@@ -87,9 +79,32 @@ export default {
          },
         
     },
+    methods: {
+        toggleList() {
+            if(!this.totalCount) {
+                return;
+            }
+            this.flod =!this.flod;
+        },
+        empty() {
+            this.selectFoods.forEach((food)=>{
+                food.count=0;
+            })
+        },
+        toPay() {
+
+            wx.navigateTo({
+            url: '/pages/pay/main',
+            success: function(res){
+            console.log("success")
+            },
+        })
+        }
+     
+    },
      components: {
-       
-        cartcontrol
+        cartcontrol,
+        notice
     },
     computed: {
         totalPrice() {
@@ -123,12 +138,13 @@ export default {
                 return 'enough'
             }
         },
-        listShow(){
-            if(!this.totalCount) {
+        listShow() {
+            if (!this.totalCount) {
                 this.flod = true;
-                return false;
+                return false
             }
             let show = !this.flod;
+            return show;
         }
     }
 }
@@ -136,9 +152,10 @@ export default {
 
 <style lang="stylus" scoped>
  @import "../../common/fonts/iconfont.css";
+   @import "../../common/stylus/mixin";
     .shopcart
         position fixed
-        z-z-index 99
+        z-index 999
         left 0
         bottom 0
         width 100%
@@ -168,13 +185,14 @@ export default {
                         background #2b343c
                         text-align center
                         &.highlight
-                            background rgb(0,160,220)
+                            background #ffd161
+                            transform scale(1.2)
                         .icon
                             line-height 88rpx
                             font-size 48rpx
                             color #80858a
                             &.highlight
-                                color #ffffff
+                                color #000
                     .num
                         position absolute
                         top 0
@@ -223,8 +241,71 @@ export default {
                     font-weight 700
                     background #2b333b
                     &.enough
-                        background #00b43c
-                        color #ffffff
-        
+                        background  #ffd161
+                        color #000
+        .shopcart-list
+            position absolute
+            top  0
+            left 0
+            z-index -1
+            width 100%
+            background #ffffff
+            transform translate3d(0,-100%,0)
+            .list-header
+                height 80rpx
+                line-height 80rpx
+                padding 0 36rpx
+                background #f4f4f4
+                .delete
+                    float right
+                    display flex
+                    align-items center
+                    justify-content center
+                    .image
+                        display inline-block
+                        width 35rpx
+                        height 35rpx
+                        background url(./delete.png)
+                        background-repeat no-repeat
+                        background-size 100% 100%  
+                    .empty
+                        font-size 30rpx
+                        padding-left 10rpx
+                        color #666
+            .list-content
+                padding 0 36rpx
+                max-height 434rpx
+                overflow hidden
+                background #ffffff
+                .food
+                    position relative
+                    padding 46rpx 0
+                    box-size border-box
+                    border-1px(rgba(rgba(7,17,27,.1)))
+                    .name
+                        line-height 48rpx
+                        font-size 28rpx
+                        color #333
+                    .price
+                        position absolute
+                        right 300rpx
+                        bottom 46rpx
+                        line-height 48rpx
+                        font-size 28rpx
+                        color #333
+                        font-weight 700
+                    .cartcontrol-wrapper
+                        position absolute
+                        right 40rpx
+                        bottom 35rpx
+    .list-mask
+        position fixed
+        top 0
+        left 0
+        width 100%
+        height 100%
+        z-index  100
+        background #666666
+        opacity .7
 
 </style>

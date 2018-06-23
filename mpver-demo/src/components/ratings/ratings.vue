@@ -27,7 +27,7 @@
             <split></split>
             <ratingselect :select-type="selectType" :desc="desc"></ratingselect>
         </div>
-        <div class="rating-wrapper">
+        <div class="ratings-wrapper">
                 <ul>
                     <li v-for="(rating,index) in ratings" :key="index" class="rating-wrapper">
                         <div class="avater">
@@ -145,13 +145,14 @@ export default {
                             margin-left  24rpx
                             font-size 24rpx
                             color rgb(147,153,159)
-        .rating-wrapper
+        .ratings-wrapper
             padding 0 36rpx
             margin-top 36rpx
             margin-bottom 36rpx
             .rating-wrapper
                 display flex
                 border-1px(rgba(7,17,27,.1))
+                margin-top 36rpx
                 .avater
                     flex  0  0 56rpx 
                     width 56rpx
@@ -178,6 +179,15 @@ export default {
                         font-size 24rpx
                         line-height 36rpx
                         color rgb(7,17,27)
+                        padding-bottom 36rpx
+                    .time
+                        position absolute
+                        right 36rpx
+                        font-size 20rpx
+                        font-weight 200
+                        color rgb(147,153,159)
+                        line-height 24rpx
+
 
                 
 

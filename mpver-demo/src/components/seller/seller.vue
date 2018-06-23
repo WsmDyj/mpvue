@@ -51,6 +51,15 @@
                    </div>
                </scroll-view>
             </div>
+             <split></split>
+             <div class="info">
+                 <h1 class="title  border-1px">商家信息</h1>
+                 <ul>
+                     <li class="info-item" v-for="(info,index) in seller.infos" :key="index">
+                         <span class="text">{{info}}</span>
+                     </li>
+                 </ul>
+             </div>
         </div>
     </div>
 </template>
@@ -172,6 +181,26 @@ export default {
                     white-space nowrap
                     &:last-child
                         margin-right none 
+            .info
+                padding  36rpx 36rpx 0 36rpx
+                color rgb(7,17,27)
+                .title
+                    padding-bottom 24rpx
+                    border-1px(rgba(7,17,27,0.1))
+                .info-item
+                    padding 32rpx 24rpx
+                    font-size 20rpx
+                    border-1px(rgba(7,17,27,0.1))
+                    .text
+                        padding 12rpx
+                        font-size 24rpx
+                        font-weight 200
+                        line-height 32rpx
+                        color rgb(7,17,27)
+                        
+
+                   
+
 
 
 

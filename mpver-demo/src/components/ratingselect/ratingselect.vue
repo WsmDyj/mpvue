@@ -2,15 +2,15 @@
     <div class="ratingselect">
         <div class="rating-type border-1px">
             <span class="block positive" :class="{'active': selectType===2}">{{desc.all}}<span class="count">
-                </span>47</span>
+                </span>(47)</span>
             <span class="block positive" :class="{'active': selectType===0}">{{desc.positive}}<span class="count">
-                </span>50</span>
+                </span>(40)</span>
             <span class="block negative" :class="{'active': selectType===1}">{{desc.negative}}<span class="count">
-                </span>7</span>
+                </span>(7)</span>
         </div>
         <div class="switch">
-            <div class="icon"></div>
-            <span class="text">只看有内容的评价</span>
+            <div class="iconfont icon-rentongguli icon"></div>
+            <span class="text">只看好评</span>
         </div>
     </div>
 </template>
@@ -40,8 +40,8 @@ export default {
             default() {
                 return {
                     all: '全部',
-                    positive: '满意',
-                    negative: '不满意'
+                    positive: '好评',
+                    negative: '差评'
                 }
             }
         }
@@ -62,39 +62,34 @@ export default {
                 display inline-block
                 padding 16rpx 24rpx
                 margin-right 16rpx
-                border-radius 1rpx
+                border 1rpx solid #cccccc
+                border-radius 5rpx
                 font-size 24rpx
                 line-height 32rpx
                 color rgb(77,85,93)
                 &.active
-                    color #fff
+                    color #ffd161
                 .count
                     margin-left 4rpx
                     font-size 16rpx
                 &.positive
-                    background rgba(0,160,220,.2)
+                    background #ffffff
                     &.active
-                        background rgb(0,160,220)
+                        background #fff8e9
                 &.negative
-                    background rgba(77,85,93,.2)
+                    background #fff
                     &.active
                         background rgb(77,85,93)
         .switch
+            display flex
             padding 24rpx 36rpx
             line-height 48rpx
             border-bottom 1px solid rgba(7,17,27,.1)
             color rgb(147,153,159)
             font-size 0
             .icon
-                height 24rpx
-                width 24rpx
-                border 1px solid rgba(7,17,27,.1)
-                border-radius 50%
-                line-height 24rpx
-                display inline-block
-                margin-right 8rpx
-                font-size 48rpx
-                background-color rgb(0,160,220)
+                color #ffd161
             .text
-                font-size 36rpx
+                font-size 24rpx
+                padding-left 10rpx
 </style>

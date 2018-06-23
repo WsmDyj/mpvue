@@ -2,14 +2,13 @@
   <div id="app">
    <v-header :seller="seller"></v-header>
     <div class="tab">
-          <scroll-view class="tab-item" :class="{active:changeNav == index}" v-for="(item,index) in navList" :key="index" :data-current="index" @tap="swichNav">
+          <div class="tab-item" :class="{active:changeNav == index}" v-for="(item,index) in navList" :key="index" :data-current="index" @click="swichNav">
            {{item.name}}
-          </scroll-view>
+          </div>
     </div>
     <goods v-if="changeNav==0" ></goods>
     <ratings v-if="current==1" :seller="seller"></ratings>
     <seller v-if="current==2" :seller="seller"></seller>
-   
   </div>
 
 </template>
@@ -17,13 +16,15 @@
   import header from "@/components/header/header";
   import goods from "@/components/goods/goods";
   import ratings from "@/components/ratings/ratings";
-  import seller from "@/components/seller/seller"
+  import seller from "@/components/seller/seller";
+  import fly from '@/utils/fly'
+  
 export default {
   data() {
     return {
       goods:{},
       seller: {},
-      navList: [{name:'商品'},{name:'评论'},{name:'商家'}],
+      navList: [{name:'菜单'},{name:'评价'},{name:'商家'}],
       changeNav:0,
       current: null
     }
@@ -35,18 +36,15 @@ export default {
         this.current = current
       //  console.log(current)
      },
-     swiperChange(e) {
-       console.log(e)
-     }
+    
   },
   created() {
-     wx.request({
-        url:'https://www.easy-mock.com/mock/5aded45053796b38dd26e970/sell#!method=get',
-        success: (res) => {
-          this.seller = res.data.data.seller
-          this.goods = res.data.data.goods
-        },
-      })
+     fly.get('sell#!method=get').then((res)=>{
+              this.goods = res.data.data.goods
+              this.seller = res.data.data.seller
+            }).catch((e)=>{
+            console.log(e)
+            })
     },
   components: {
     "v-header":header,
@@ -57,7 +55,10 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-
+#app
+  height 100vh
+  width 100%
+  overflow hidden
   .tab
     display flex
     justify-content space-around
@@ -80,5 +81,6 @@ export default {
       line-height 28rpx
     .active  
       color rgb(240, 20, 20)
+      font-weight 500
     
 </style>

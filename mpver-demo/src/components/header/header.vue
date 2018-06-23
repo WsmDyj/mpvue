@@ -42,7 +42,7 @@
                    </div>
                    <ul v-if="seller.supports" class="supports">
                        <li class="support-item" v-for="(item,index) in seller.supports" :key="index">
-                           <span class="icon" :class="classMap[seller.supports[index].type]"></span>
+                           <span class="icon decrease" :class="classMap[seller.supports[index].type]"></span>
                             <span class="text">{{seller.supports[index].description}}</span>
                        </li>
                    </ul>
@@ -207,7 +207,7 @@ export default {
             filter blur(20rpx)
         .detail
             position fixed
-            z-index 100
+            z-index 99999
             top 0
             left 0
             width 100%
@@ -255,6 +255,7 @@ export default {
                                 display inline-block
                                 width 32rpx
                                 height 32rpx
+                                margin-top -12rpx
                                 vertical-align top
                                 margin-right 24rpx
                                 background-size 32rpx 32rpx

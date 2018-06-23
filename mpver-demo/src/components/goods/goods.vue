@@ -1,20 +1,23 @@
 <template>
+<div>
 <div class="goods">
-   <scroll-view :scroll-y="frue" class="menu-wrapp">
+   <scroll-view :scroll-y="true" class="menu-wrapp">
        <ul>
-           <li  class="menu-item" :class="{'active':changeGoods === item.id}" v-for="(item,index) in goods" :key="index" :data-id="item.id" @click="switchGoods">
+           <li  class="menu-item" :class="{'active':changeGoods === item.id}" v-for="(item,index) in goods" :key="index" :data-id="item.id"
+            @click="switchGoods">
                <span class="text border-1px">
                     {{item.name}}
                 </span>
            </li>
        </ul>
    </scroll-view>
-      <scroll-view :scroll-y="true" class="foods-wrapper" scroll-top="0" :scroll-into-view="whereFood">
+      <scroll-view :scroll-y="true" class="foods-wrapper"  @scroll="goodsScrollAct" :scroll-into-view="whereFood">
        <ul>
-           <li v-for="(item,curr) in goods" :key="curr" :data-id="curr" :id="item.id"   @click="selectFood" class="food-list " >
+           <li v-for="(item,id) in goods" :key="id" :data-id="id" :id="item.id"  class="food-list " >
                <h1 class="title">{{item.name}}</h1>
                <ul>
-                   <li v-for="(food, index) in item.foods" :key="index" class="food-item  border-1px">
+                   <li v-for="(food, index) in item.foods" :key="index" :data-id="index"  @click="selectFood(food,event)" class="food-item  border-1px">
+                      
                        <div class="icon">
                            <image :src="food.icon" style="width:114rpx;height:114rpx" />
                        </div>
@@ -22,7 +25,7 @@
                            <h2 class="name">{{food.name}}</h2>
                            <p class="desc">{{food.description}}</p>
                            <div class="extra">
-                               <span class="count">月售{{food.sellCount}}份</span>
+                               <span class="count">月售{{food.sellCount}}</span>
                                <span class="rating">好评率{{food.rating}}%</span>
                            </div>
                            <div class="price">
@@ -40,30 +43,60 @@
    </scroll-view>
     <shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
 </div>
+<div class="food border-1px" v-show="foodFlg">
+    <div class="icon">
+        <image :src="selectedFood.image" style="width:670rpx;height:500rpx" />
+    </div>
+    <div class="content">
+        <div class="extra">
+            <h2 class="name">{{selectedFood.name}}</h2>
+            <div class="desc">
+                <span class="count">月售{{selectedFood.sellCount}}</span>
+                <span class="rating">好评率{{selectedFood.rating}}%</span>
+            </div>
+        </div>
+        <div class="price">
+            <span class="now">￥{{selectedFood.price}}</span>
+            <div class="cartcontrol-wrapper">
+                <cartcontrol :food="selectedFood"></cartcontrol>
+            </div>
+        </div>
+       
+    </div>
+    <div class="close" @click="close">
+        <span class="text">x</span>
+    </div>
+</div>
+<div class="list-mask" v-show="foodFlg" @click="selectFood"></div>
+</div>
 </template>
 <script>
     import shopcart from "../shopcart/shopcart"
     import cartcontrol  from "../cartcontrol/cartcontrol"
+    import fly from '@/utils/fly'
 export default {
     data() {
         return {
             goods: {},
             seller: {},
             changeGoods: 'hot',
-            whereFood: 'hot'
+            whereFood: 'hot',
+            foodFlg: false,
+            selectedFood: {}
         }
     },
     onLoad() {
-    this.classMap = ['decrease','discount','special','invoice','guarantee'];
-     wx.request({
-        url:'https://www.easy-mock.com/mock/5aded45053796b38dd26e970/sell#!method=get',
-        success: (res) => {
-          this.goods = res.data.data.goods
-          this.seller = res.data.data.seller
-        },
-        
-      })
- 
+            //发起请求
+                wx.showLoading({
+                    title: '加载中',
+                })
+            fly.get('sell#!method=get').then((res)=>{
+                this.goods = res.data.data.goods
+                this.seller = res.data.data.seller
+                wx.hideLoading();
+            }).catch((e)=>{
+            console.log(e)
+            })
     },
     components: {
         shopcart,
@@ -74,14 +107,32 @@ export default {
             const current = e.currentTarget.dataset.id;
             this.changeGoods = current;
             this.whereFood = current;
-            console.log(this.changeGoods);
         },
-       selectFood(e) {
-            console.log(e)
+       selectFood(food,event) {
+           this.selectedFood = food;
+           this.foodFlg=true;
         },
+        close() {
+            this.foodFlg = false
+        },
+        goodsScrollAct(e) {
+         
+            
+            var height =  e.mp.detail.scrollHeight;
+          
+            const scrollTop = e.mp.detail.scrollTop
+         
+            console.log(scrollTop)
+            if(0<scrollTop<1028){
+                this.changeGoods = 'hot'
+            }
+           if(scrollTop>1028) {
+               this.changeGoods = 'one'
+           }
+        }
         
     },
-    computed: {
+   computed: {
         selectFoods() {
             let foods = [];
             this.goods.forEach((good) => {
@@ -92,7 +143,7 @@ export default {
                 })
             });
             return foods
-        }
+        },
     }
 
 }
@@ -110,7 +161,7 @@ export default {
         .menu-wrapp
             flex 0 0 160rpx
             width 160rpx
-            background #f3f5f7
+            background #f7f8f9
             .active
                 position relative
                 background #ffffff
@@ -204,6 +255,82 @@ export default {
                         top 0
                         bottom 30rpx
                         margin-top 70rpx
+    .food
+        position fixed
+        z-index 99999
+        margin  auto
+        left 0
+        right 0
+        top 0
+        bottom 0
+        width 670rpx
+        height 840rpx 
+        .content
+            height 210rpx
+            width 100%
+            box-sizing border-box
+            .extra
+                display flex
+                flex-direction column
+                justify-content center
+                padding-left 16rpx
+                height 120rpx
+                background #fff
+                .name 
+                    display block
+                    font-size 30rpx
+                    line-height 30rpx
+                    color #333333
+                .desc
+                    padding-top 18rpx
+                    .count, .rating
+                        font-size 23rpx
+                        line-height 23rpx
+                        color #8c8c8c
+                    .rating
+                       
+                        padding-left 30rpx 
+            .price
+                height 90rpx
+                background #fafafa
+                box-sizing border-box
+                line-height 90rpx
+                .now
+                    padding-left 30rpx
+                    font-size 40rpx
+                    color red
+                .cartcontrol-wrapper
+                    float right
+        .close
+            margin-top 40rpx
+            margin-left auto
+            margin-right auto 
+            width 80rpx
+            height 80rpx
+            line-height 80rpx
+            text-align center
+            background #3d3d3d
+            border-radius 50%
+            .text
+                font-size 50rpx
+                line-height 30rpx
+                color #ffffff
+
+    .list-mask
+        position fixed
+        top 0
+        left 0
+        width 100%
+        height 100%
+        z-index  100
+        background #666666
+        opacity .7
+
+
+
+
+
+
 
                         
 </style>

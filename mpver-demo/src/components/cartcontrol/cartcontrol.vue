@@ -1,8 +1,8 @@
 <template>
     <div class="cartcontrol">
-         <div class="cart-decrease iconfont icon-jianhao"  v-if="food.count>0" @click="decreaseCart" ></div>
+         <div class="cart-decrease iconfont  icon-jianhao"  v-if="food.count>0" @click.stop="decreaseCart" transition="move"></div>
         <div class="cart-count" v-if="food.count>0">{{food.count}}</div>
-        <div class="cart-add iconfont icon-jiahao-copy" @click="addCart"></div>
+        <div class="cart-add iconfont icon-jiahao-copy" @click.stop="addCart"></div>
     </div>
 </template>
 
@@ -51,6 +51,7 @@ export default {
             color rgb(0,160,220)
         .cart-decrease
             display inline-block
+            color #c4c4c4
         .cart-count
             display inline-block
             vertical-align top
@@ -62,5 +63,6 @@ export default {
             color rgb(147,153,159)
         .cart-add
             display inline-block
+            color #ffd161
         
 </style>
