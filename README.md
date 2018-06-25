@@ -23,6 +23,5 @@ npm run build --report
 ```
 
 * 3、小程序开发工具指向下面的dist目录
-## 效果图
-(https://github.com/WsmDyj/mpvue/tree/master/image)来的实际。一起欣赏下美团外卖吧！
+## 效果图 一起点个外卖吧
 ![index](https://user-gold-cdn.xitu.io/2018/6/25/164347a3d901b552?w=351&h=628&f=gif&s=2550668)
