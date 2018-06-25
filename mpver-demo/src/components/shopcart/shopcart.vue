@@ -93,11 +93,13 @@ export default {
         },
         toPay() {
 
-            wx.navigateTo({
-            url: '/pages/pay/main',
-            success: function(res){
-            console.log("success")
-            },
+            try {
+                wx.setStorageSync('selectFoods', this.selectFoods)
+            } catch (e) {   
+                console.log(e) 
+            }
+            wx.switchTab({
+            url: '/pages/order/main',
         })
         }
      

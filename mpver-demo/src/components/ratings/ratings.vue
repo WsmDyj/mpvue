@@ -61,13 +61,7 @@ export default {
         }
     },
     created() {
-     wx.request({
-        url:'https://www.easy-mock.com/mock/5aded45053796b38dd26e970/sell#!method=get',
-      
-        success: (res) => {
-          this.ratings= res.data.data.ratings
-        },
-      })
+        this.getList();
     },
     components: {
         star,

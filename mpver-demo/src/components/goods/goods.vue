@@ -77,7 +77,7 @@
 export default {
     data() {
         return {
-            goods: {},
+            goods: [],
             seller: {},
             changeGoods: 'hot',
             whereFood: 'hot',
@@ -86,17 +86,7 @@ export default {
         }
     },
     onLoad() {
-            //发起请求
-                wx.showLoading({
-                    title: '加载中',
-                })
-            fly.get('sell#!method=get').then((res)=>{
-                this.goods = res.data.data.goods
-                this.seller = res.data.data.seller
-                wx.hideLoading();
-            }).catch((e)=>{
-            console.log(e)
-            })
+        this.getList();
     },
     components: {
         shopcart,
@@ -119,22 +109,19 @@ export default {
          
             
             var height =  e.mp.detail.scrollHeight;
-          
+            
             const scrollTop = e.mp.detail.scrollTop
          
             console.log(scrollTop)
-            if(0<scrollTop<1028){
-                this.changeGoods = 'hot'
-            }
-           if(scrollTop>1028) {
-               this.changeGoods = 'one'
-           }
         }
         
     },
    computed: {
         selectFoods() {
             let foods = [];
+            if(!this.goods.length){
+                return;
+            }
             this.goods.forEach((good) => {
                 good.foods.forEach((food)=>{
                     if(food.count){
